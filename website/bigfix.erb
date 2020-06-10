@@ -1,0 +1,37 @@
+<% wrap_layout :inner do %>
+    <% content_for :sidebar do %>
+      <div class="docs-sidebar hidden-print affix-top" role="complementary">
+        <ul class="nav docs-sidenav">
+          <li<%= sidebar_current("docs-home") %>>
+            <a href="/docs/providers/index.html">All Providers</a>
+          </li>
+  
+          <li<%= sidebar_current("docs-bigfix-index") %>>
+            <a href="/docs/providers/bigfix/index.html">Bigfix Provider</a>
+          </li>
+
+          <li<%= sidebar_current("docs-bigfix-resource") %>>
+            <a href="#">bigfix resource</a>
+          <ul class="nav nav-visible">
+            <li<%= sidebar_current("docs-bigfix-computer") %>>
+              <a href="/docs/providers/bigfix/r/multiple_action_group.html">Multiple Action Group</a>
+            </li>
+          </ul>
+          </li>
+  
+          <li<%= sidebar_current("docs-bigfix-data-source") %>>
+            <a href="#">bigfix data source</a>
+            <ul class="nav nav-visible">
+              <li<%= sidebar_current("docs-bigfix-fixlet") %>>
+                <a href="/docs/providers/bigfix/r/fixlet.html">Bigfix Fixlet</a>
+              </li>
+	            <li<%= sidebar_current("docs-bigfix-computer") %>>
+	              <a href="/docs/providers/bigfix/r/computer.html">Bigfix Computer</a>
+	            </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+  <%= yield %>
+<% end %>
