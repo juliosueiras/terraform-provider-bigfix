@@ -143,6 +143,64 @@ type ActionCreationResponse struct {
 	} `xml:"Action"`
 }
 
+type FixletCreationResponse struct {
+	XMLName                   xml.Name `xml:"BESAPI"`
+	Text                      string   `xml:",chardata"`
+	Xsi                       string   `xml:"xsi,attr"`
+	NoNamespaceSchemaLocation string   `xml:"noNamespaceSchemaLocation,attr"`
+	Fixlet                    struct {
+		Text         string `xml:",chardata"`
+		Resource     string `xml:"Resource,attr"`
+		LastModified string `xml:"LastModified,attr"`
+		Name         string `xml:"Name"`
+		ID           string `xml:"ID"`
+	} `xml:"Fixlet"`
+}
+
+type TaskCreationResponse struct {
+	XMLName                   xml.Name `xml:"BESAPI"`
+	Text                      string   `xml:",chardata"`
+	Xsi                       string   `xml:"xsi,attr"`
+	NoNamespaceSchemaLocation string   `xml:"noNamespaceSchemaLocation,attr"`
+	Task                      struct {
+		Text         string `xml:",chardata"`
+		Resource     string `xml:"Resource,attr"`
+		LastModified string `xml:"LastModified,attr"`
+		Name         string `xml:"Name"`
+		ID           string `xml:"ID"`
+	} `xml:"Task"`
+}
+
+type FileCreationResponse struct {
+	XMLName                   xml.Name `xml:"BESAPI"`
+	Text                      string   `xml:",chardata"`
+	Xsi                       string   `xml:"xsi,attr"`
+	NoNamespaceSchemaLocation string   `xml:"noNamespaceSchemaLocation,attr"`
+	FileUpload                struct {
+		Text     string `xml:",chardata"`
+		Resource string `xml:"Resource,attr"`
+		Name     string `xml:"Name"`
+		URL      string `xml:"URL"`
+		Size     int    `xml:"Size"`
+		SHA1     string `xml:"SHA1"`
+		SHA256   string `xml:"SHA256"`
+	} `xml:"FileUpload"`
+}
+
+type FileReferencesResponse struct {
+	XMLName                   xml.Name `xml:"BESAPI"`
+	Text                      string   `xml:",chardata"`
+	Xsi                       string   `xml:"xsi,attr"`
+	NoNamespaceSchemaLocation string   `xml:"noNamespaceSchemaLocation,attr"`
+	FileUploadReferences      []struct {
+		Text      string `xml:",chardata"`
+		Resource  string `xml:"Resource,attr"`
+		ID        string `xml:"ID"`
+		UserID    string `xml:"UserID"`
+		IsPrivate int    `xml:"IsPrivate"`
+	} `xml:"FileUploadReference"`
+}
+
 //=====================================================================================
 
 // Action : Contains details of action

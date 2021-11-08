@@ -3,6 +3,7 @@ package bigfix
 import (
 	"log"
 	"net/url"
+	"strconv"
 )
 
 // ConnectBigFixAPI : Bigfix Authentication.
@@ -41,6 +42,40 @@ func GetActionDetailAPI(serverIP string, port string, id string) string {
 	return connect
 }
 
+func GetFixletDetailAPI(serverIP string, port string, id string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlet/" + siteType + "/" + id
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlet/" + siteType + "/" + siteName + "/" + id
+	}
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func GetUploadFileDetailAPI(serverIP string, port string, id string) string {
+	connect := "https://" + serverIP + ":" + port + "/api/upload" + id
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func GetUploadFileDetailReferencesAPI(serverIP string, port string, id string) string {
+	connect := "https://" + serverIP + ":" + port + "/api/upload" + id + "/references"
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func GetTaskDetailAPI(serverIP string, port string, id string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/task/" + siteType + "/" + id
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/task/" + siteType + "/" + siteName + "/" + id
+	}
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
 // GetDeleteActionAPI : Get fixlet details.
 //
 // BigFix API Doc : https://bigfix.me/restapi/?id=271
@@ -51,6 +86,8 @@ func GetDeleteActionAPI(serverIP string, port string, id string) string {
 
 }
 
+// GetDeleteFixletAPI : Get fixlet details.
+//
 // GetAllSitesAPI : Get list of all sites.
 //
 // BigFix API Doc : https://bigfix.me/restapi/?id=316
@@ -117,6 +154,100 @@ func GetCountofRelevantFixletsAPI(serverIP string, port string, siteName string,
 func GetComputerNameAPI(serverIP string, port string, id string) string {
 	query := "relevance=(name+of+it)+of+bes+computer+whose+(id+of+it+is+" + id + "+)"
 	connect := "https://" + serverIP + ":" + port + "/api/query?" + query
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+// CreateFixlet : Create Fixlet
+//
+// BigFix API Doc : https://bigfix.me/restapi/?id=306
+func CreateFixlet(serverIP string, port string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlets/" + siteType
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlets/" + siteType + "/" + siteName
+	}
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func UpdateFixlet(serverIP string, port string, fixletId string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlet/" + siteType + "/" + fixletId
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlet/" + siteType + "/" + siteName + "/" + fixletId
+	}
+
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func GetDeleteFixletAPI(serverIP string, port string, id string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlet/" + siteType + "/" + id
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/fixlet/" + siteType + "/" + siteName + "/" + id
+	}
+
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func CreateTask(serverIP string, port string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/tasks/" + siteType
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/tasks/" + siteType + "/" + siteName
+	}
+
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func UpdateTask(serverIP string, port string, fixletId string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/task/" + siteType + "/" + fixletId
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/task/" + siteType + "/" + siteName + "/" + fixletId
+	}
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func GetDeleteTaskAPI(serverIP string, port string, id string, siteName string, siteType string) string {
+	var connect string
+	if siteType == "master" {
+		connect = "https://" + serverIP + ":" + port + "/api/task/" + siteType + "/" + id
+	} else {
+		connect = "https://" + serverIP + ":" + port + "/api/task/" + siteType + "/" + siteName + "/" + id
+	}
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func CreateAction(serverIP string, port string) string {
+	connect := "https://" + serverIP + ":" + port + "/api/actions"
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func CreateUploadFile(serverIP string, port string, isPrivate bool) string {
+	privateInt := 0
+	if isPrivate {
+		privateInt = 1
+	}
+	connect := "https://" + serverIP + ":" + port + "/api/upload?private=" + strconv.Itoa(privateInt)
+	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
+	return connect
+}
+
+func GetDeleteUploadFile(serverIP string, port string, fileLoc string) string {
+	connect := "https://" + serverIP + ":" + port + "/api/upload" + fileLoc
 	log.Println("[DEBUG] Getting response from URL : \n\n", connect)
 	return connect
 }

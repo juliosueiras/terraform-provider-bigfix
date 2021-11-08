@@ -1,10 +1,13 @@
 package bigfix
 
 import (
+	"bytes"
 	"crypto/tls"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
@@ -77,6 +80,68 @@ func BFXConfig(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	return config, nil
+}
+
+func (config Config) newfileUploadRequest(uri string, params map[string]string, paramName, path string) (*http.Response, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	fileContents, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	fi, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
+	file.Close()
+
+	body := new(bytes.Buffer)
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(paramName, fi.Name())
+	if err != nil {
+		return nil, err
+	}
+	part.Write(fileContents)
+
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	flagSSL := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+	skipSslVerify := &http.Client{
+		Transport: flagSSL,
+		// set default timeout to 300 secs
+		Timeout: 300 * time.Second,
+	}
+	request, err := http.NewRequest("POST", uri, body)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+		return nil, err
+	}
+	log.Println("[DEBUG] Initialize HTTPS client to skip SSL certificate verification.")
+	request.SetBasicAuth(config.Username, config.Password)
+	request.Header.Add("Content-Type", writer.FormDataContentType())
+
+	// Make request to BigFix Rest API
+	response, err1 := skipSslVerify.Do(request)
+	if err1 != nil {
+		return nil, err1
+	}
+
+	if response.StatusCode >= http.StatusOK && response.StatusCode < 400 {
+		log.Println("[DEBUG] HTTP response OK  ")
+		return response, nil
+	}
+
+	// catch all other status code
+	return nil, err
 }
 
 // BfxConnection : Will Connect to BigFix Server

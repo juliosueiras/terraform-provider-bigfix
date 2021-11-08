@@ -49,6 +49,9 @@ func Provider() terraform.ResourceProvider {
 		//Supported Resources by this provider
 		ResourcesMap: map[string]*schema.Resource{
 			"bigfix_multiple_action_group": resourceMultiActionGroup(),
+			"bigfix_fixlet":                resourceFixlet(),
+			"bigfix_task":                  resourceTask(),
+			"bigfix_upload_file":           resourceUploadFile(),
 		},
 
 		ConfigureFunc: providerConfigure,

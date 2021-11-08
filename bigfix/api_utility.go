@@ -39,6 +39,43 @@ func GetComputerCount(config Config) string {
 	return ""
 }
 
+// DeleteFixlet : Will delete action from console
+func DeleteFixlet(config Config, id string, siteName string, siteType string) (bool, error) {
+	url := GetDeleteFixletAPI(config.ServerIP, config.Port, id, siteName, siteType)
+	response, err := config.BfxConnection(DELETE, url, nil)
+	if err != nil {
+		return false, err
+	}
+	if response.StatusCode == http.StatusOK {
+		log.Println("[DEBUG] Action Deleted Successfully")
+		return true, nil
+	}
+	data, err1 := ioutil.ReadAll(response.Body)
+	if err1 != nil {
+		log.Printf("[DEBUG] Error reading response body : %v\n", err1)
+		return false, err
+	}
+	return false, fmt.Errorf(string(data))
+}
+
+func DeleteTask(config Config, id string, siteName string, siteType string) (bool, error) {
+	url := GetDeleteTaskAPI(config.ServerIP, config.Port, id, siteName, siteType)
+	response, err := config.BfxConnection(DELETE, url, nil)
+	if err != nil {
+		return false, err
+	}
+	if response.StatusCode == http.StatusOK {
+		log.Println("[DEBUG] Action Deleted Successfully")
+		return true, nil
+	}
+	data, err1 := ioutil.ReadAll(response.Body)
+	if err1 != nil {
+		log.Printf("[DEBUG] Error reading response body : %v\n", err1)
+		return false, err
+	}
+	return false, fmt.Errorf(string(data))
+}
+
 // DeleteAction : Will delete action from console
 func DeleteAction(config Config, id string) (bool, error) {
 	url := GetDeleteActionAPI(config.ServerIP, config.Port, id)
@@ -56,6 +93,46 @@ func DeleteAction(config Config, id string) (bool, error) {
 		return false, err
 	}
 	return false, fmt.Errorf(string(data))
+}
+
+func DeleteUploadFile(config Config, id string) (bool, error) {
+	url := GetUploadFileDetailReferencesAPI(config.ServerIP, config.Port, id)
+	response, err := config.BfxConnection(GET, url, nil)
+	if err != nil {
+		return false, err
+	}
+
+	// Get action
+	var fileResponse FileReferencesResponse
+	if response != nil {
+		defer response.Body.Close()
+
+		data, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			log.Printf("[DEBUG] Error reading response body : %v\n", err)
+			return false, err
+		}
+		xml.Unmarshal([]byte(data), &fileResponse)
+	}
+	for _, v := range fileResponse.FileUploadReferences {
+		url := v.Resource
+		response, err := config.BfxConnection(DELETE, url, nil)
+		if err != nil {
+			return false, err
+		}
+		if response.StatusCode == http.StatusOK {
+			log.Println("[DEBUG] Action Deleted Successfully")
+			continue
+		}
+		data, err1 := ioutil.ReadAll(response.Body)
+		if err1 != nil {
+			log.Printf("[DEBUG] Error reading response body : %v\n", err1)
+			return false, err
+		}
+		return false, fmt.Errorf(string(data))
+	}
+
+	return true, nil
 }
 
 // SetSourcedMemberList : will set members for multiple action group
